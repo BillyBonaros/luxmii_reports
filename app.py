@@ -12,9 +12,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 # MIMEApplication attaching application-specific data (like CSV files) to email messages.
 from email.mime.application import MIMEApplication
-
+st.set_page_config(layout='wide')
 key= st.secrets["shopify_key"]
-
+st.title("Luxmii Production Management Report")
 
 def send_email(subject, body, sender, recipients, password):
     msg= MIMEMultipart()
@@ -120,12 +120,10 @@ def get_the_data():
     tab1=tab1[['name', 'product_name', 'quantity','check','notes','created_at']]
     tab1=tab1.rename(columns={'name':'order'})
     return(tab1, tab2)
-
-col1, col2, col3,col4 = st.columns(4)
+col1, col2, col3,col4, col5 = st.columns(5)
 
 update_button=col1.button("Update the Data")
-save_button=col2.button("Save me")
-
+save_button=col2.button("Save")
 
 if update_button:
     with st.spinner('Wait for it...'):
@@ -155,9 +153,9 @@ df1=pd.read_csv('tab1.csv',dtype={'notes':str})
 df2=pd.read_csv('tab2.csv',dtype={'notes':str})
 
 with tab1:
-    edited_df1 = st.data_editor(df1, num_rows="fixed")
+    edited_df1 = st.data_editor(df1, num_rows="fixed", use_container_width=True )
 with tab2:
-    edited_df2= st.data_editor(df2, num_rows="fixed")
+    edited_df2= st.data_editor(df2, num_rows="fixed", use_container_width=True )
     
 if save_button:
     edited_df1.to_csv('tab1.csv',index=False)
