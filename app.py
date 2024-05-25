@@ -83,6 +83,7 @@ def get_item_location(order_id):
     return(z)
 
 
+
 def get_the_data():
     df=get_all_orders()
     df['list_items']=df['line_items'].apply(lambda x:[{'name':i['name'],'id':i['id'],'quantity':i['quantity']} for i in x] )
@@ -112,9 +113,9 @@ def get_the_data():
     tab2['name']=tab2['name'].apply(lambda x: ', '.join(x))
     tab2=tab2.rename(columns={'name':'order_numbers'})
     tab2['check']=False
-    tab2['notes']=''
+    tab2['notes']=np.nan
     tab1['check']=False
-    tab1['notes']=''
+    tab1['notes']=np.nan
     tab1=tab1.drop(['id','item_id','location'],axis=1)
     tab1=tab1[['name', 'product_name', 'quantity','check','notes','created_at']]
     tab1=tab1.rename(columns={'name':'order'})
@@ -129,15 +130,29 @@ save_button=col2.button("Save me")
 if update_button:
     with st.spinner('Wait for it...'):
 
-        df1,df2=get_the_data()
+        # df1,df2=get_the_data()
+
+        a,b=get_the_data()
+        df1=pd.read_csv('tab1.csv',dtype={'notes':str})
+        df2=pd.read_csv('tab2.csv',dtype={'notes':str})
+
+        df1=a.merge(df1[['order','product_name','notes']],on=['order','product_name'],how='left')
+        df1['notes']=df1['notes_y'].combine_first(df1['notes_x'])
+        df1=df1[['order', 'product_name', 'quantity', 'check',  'notes', 'created_at']]
+
+        b.reset_index(inplace=True)
+        df2=b.merge(df2[['product_name','notes']],on='product_name',how='left')
+        df2['notes']=df2['notes_y'].combine_first(df2['notes_x'])
+        df2=df2[['product_name','quantity','order_numbers','check','notes']]
+
         df1.to_csv('tab1.csv',index=False)
-        df2.to_csv('tab2.csv')
+        df2.to_csv('tab2.csv',index=False)
         st.success('Done!')
 
 
 tab1, tab2 = st.tabs(["All Data", "Aggregated Items"])
-df1=pd.read_csv('tab1.csv')
-df2=pd.read_csv('tab2.csv')
+df1=pd.read_csv('tab1.csv',dtype={'notes':str})
+df2=pd.read_csv('tab2.csv',dtype={'notes':str})
 
 with tab1:
     edited_df1 = st.data_editor(df1, num_rows="fixed")
