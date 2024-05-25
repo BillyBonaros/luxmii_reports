@@ -1,6 +1,5 @@
 *.ipynb
 *.xlsx
-*.csv
 runtime.txt
 /lux.py
 /.streamlit/
