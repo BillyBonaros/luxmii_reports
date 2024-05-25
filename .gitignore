@@ -2,6 +2,8 @@
 *.xlsx
 *.csv
 runtime.txt
-lux.py
-.streamlit
+/lux.py
+/.streamlit/
 secrets.toml
+/.streamlit/secrets.toml
+
