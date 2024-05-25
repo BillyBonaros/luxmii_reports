@@ -68,7 +68,7 @@ def get_item_location(order_id):
     payload={}
     headers = {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': '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'
+      'X-Shopify-Access-Token': key
     }
 
     response = requests.request("GET", url, headers=headers, data=payload)
