@@ -3,3 +3,4 @@
 *.csv
 runtime.txt
 lux.py
+.streamlit
