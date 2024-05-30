@@ -4,6 +4,7 @@
 # luxmii_app/.ipynb_checkpoints/luxmii-checkpoint.ipynb: 2,8
 # luxmii_app/app.py: 3
 # luxmii_app/lux.py: 2,12
+setuptools
 numpy == 1.19.3
 
 # luxmii_app/.ipynb_checkpoints/luxmii-Copy1-checkpoint.ipynb: 1,7
@@ -20,3 +21,4 @@ requests == 2.31.0
 
 # luxmii_app/app.py: 1
 streamlit == 1.35.0
+
