@@ -161,17 +161,3 @@ if save_button:
     edited_df1.to_csv('tab1.csv',index=False)
     edited_df2.to_csv('tab2.csv',index=False)
     
-    
-    
-    
-    
-    
-    
-# subject = "Email Subject"
-# body = "This is the body of the text message"
-# sender = "luxmii.agent@gmail.com"
-# recipients = ["billybonaros@gmail.com"]
-# password = "czue irol jdfh eeua"
-# path_to_file = 'WorkBook3.xlsx'
-# body_part = MIMEText(body)
-# send_email(subject, body, sender, recipients, password)
