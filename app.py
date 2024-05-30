@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import re
 import requests
-
+import os
 import smtplib
 from email.mime.text import MIMEText
 # MIMEMultipart send emails with both text content and attachments.
@@ -13,7 +13,10 @@ from email.mime.text import MIMEText
 # MIMEApplication attaching application-specific data (like CSV files) to email messages.
 from email.mime.application import MIMEApplication
 st.set_page_config(layout='wide')
-key= st.secrets["shopify_key"]
+# key= st.secrets["shopify_key"]
+key = os.environ['shopify_key']
+
+
 st.title("Luxmii Production Management Report")
 
 def send_email(subject, body, sender, recipients, password):
