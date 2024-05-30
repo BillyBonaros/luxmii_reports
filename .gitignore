@@ -1,6 +1,5 @@
 *.ipynb
 *.xlsx
-runtime.txt
 /lux.py
 /.streamlit/
 secrets.toml
