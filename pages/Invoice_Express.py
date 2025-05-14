@@ -7,7 +7,7 @@ import time
 import os
 from dotenv import load_dotenv
 import traceback
-from functions import create_invoice
+from ..functions import create_invoice
 
 if "authenticated" not in st.session_state or not st.session_state.authenticated:
     st.error("Please login first.")
