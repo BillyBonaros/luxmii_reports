@@ -7,7 +7,10 @@ import time
 import os
 from dotenv import load_dotenv
 import traceback
-from ..functions import create_invoice
+import sys 
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from functions import create_invoice
 
 if "authenticated" not in st.session_state or not st.session_state.authenticated:
     st.error("Please login first.")
