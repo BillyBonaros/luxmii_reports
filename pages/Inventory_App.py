@@ -13,15 +13,15 @@ from email.mime.text import MIMEText
 # MIMEApplication attaching application-specific data (like CSV files) to email messages.
 from email.mime.application import MIMEApplication
 st.set_page_config(layout='wide')
-key= st.secrets["shopify_key"]
-# key = os.environ['shopify_key']
+# key= st.secrets["shopify_key"]
+key = os.environ['shopify_key']
 
 if "authenticated" not in st.session_state or not st.session_state.authenticated:
     st.error("Please login first.")
     st.stop()
 
 
-    
+
 st.title("Luxmii Production Management Report")
 
 def send_email(subject, body, sender, recipients, password):
