@@ -74,8 +74,7 @@ def transform_to_second_format(first_json):
 
     country=first_json['shipping_address']["country"]
     if country=='United Kingdom':
-        observations=f'Product origin: Portugal\nThe exporter of the products covered by this document declares that, except where otherwise clearly indicated, these products are of Portuguese preferential origin.\nLisbon, {str(datetime.datetime.today().strftime("%d %B %Y"))
-}, Hanse Pty Ltd'
+        observations=f'Product origin: Portugal\nThe exporter of the products covered by this document declares that, except where otherwise clearly indicated, these products are of Portuguese preferential origin.\nLisbon, {str(datetime.datetime.today().strftime("%d %B %Y"))}, Hanse Pty Ltd'
         country='UK'
         
     else:
