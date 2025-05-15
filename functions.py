@@ -173,7 +173,7 @@ def create_invoice(order_id):
     # Retry loop for Shopify API
     while attempt < max_retries:
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            response = requests.request("GET", url, headers=headers, data=payload, verify=False)
             response.raise_for_status()  # Raises an exception for 4XX/5XX status codes
             data = response.json()
             break  # If successful, exit the retry loop

@@ -59,7 +59,7 @@ def get_all_orders():
           'X-Shopify-Access-Token': key
         }
 
-        response = requests.request("GET", url, headers=headers, data=payload)
+        response = requests.request("GET", url, headers=headers, data=payload, verify=False)
 
         
         
