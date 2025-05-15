@@ -51,6 +51,7 @@ def get_all_orders():
     last=0
     orders=pd.DataFrame()
     while True:        
+
         url = f"https://luxmii.com/admin/api/2024-04/orders.json?limit=250&fulfillment_status=unfulfilled&since_id={last}"
 
         payload={}
@@ -59,7 +60,7 @@ def get_all_orders():
           'X-Shopify-Access-Token': key
         }
 
-        response = requests.request("GET", url, headers=headers, data=payload, verify=False)
+        response = requests.request("GET", url, headers=headers, data=payload,verify=False)
 
         
         
@@ -79,7 +80,7 @@ def get_item_location(order_id):
       'X-Shopify-Access-Token': key
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload,verify=False)
     
     z=pd.DataFrame((response.json()['fulfillment_orders']))
 
