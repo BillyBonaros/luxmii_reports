@@ -40,8 +40,9 @@ def process_orders(orders, account):
             if account =="Test":
                 invoice_response = requests.get(f"https://luxmii-jasmin.onrender.com/?orderid={order_id}&extra_disc=70")
             elif account=='Production':
-                invoice_response = requests.get(f"https://luxmii-jasmin.onrender.com/production/?orderid={order_id}&extra_disc=70") 
+                invoice_response = requests.get(f"https://luxmii-jasmin.onrender.com/production?orderid={order_id}&extra_disc=70") 
             
+            st.write(invoice_response.text)
 
         except Exception as e:
             st.write(f"Invoice creation failed for order {order_id}: {str(e)}")
