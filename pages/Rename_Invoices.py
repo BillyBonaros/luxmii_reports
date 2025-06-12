@@ -45,7 +45,7 @@ if submit_button:
         for page in reader.pages:
             text += page.extract_text() + "\n"
         try:
-            out=re.findall('Order No.:\n\#*(\d+)',text)[0]
+            out=re.findall('(?:Order No.:\n#*|Reference\n#)(\d+)',text)[0]
             os.rename(inp, f'{my_dir}/{out}.pdf')
             orders.append(out)
         except:
