@@ -14,9 +14,7 @@ st.set_page_config(
 
 # Initialize session state for system message
 if 'system_message' not in st.session_state:
-    st.session_state.system_message = """You are a helpful customer service assistant. 
-Please respond to customer emails in a professional and friendly manner. 
-Always be polite, helpful, and provide accurate information."""
+    st.session_state.system_message = SYSTEM_MESSAGE
 
 def save_system_message(message):
     """Save system message to session state"""
