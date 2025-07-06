@@ -156,9 +156,12 @@ if selected_order_id:
         fulfillments = order_data.get("fulfillments", [])
         discounts = order_data.get("discount_codes", [])
         discount_codes = ", ".join([d['code'] for d in discounts]) if discounts else "None"
-
         # Order header with better styling
         st.success(f"✅ **Order #{order_data['name']}** — {order_data['email']}")
+        st.write(f"**Name:** {order_data['billing_address']['name']}")
+        st.write(f"**Country:** {order_data['billing_address']['country']}")
+        st.write(f"**Total Price (after discounts):** {order_data['total_price_set']['presentment_money']['amount']} {order_data['total_price_set']['presentment_money']['currency_code']}")
+        st.write(f"**Tags:** {order_data['tags']}")
         st.markdown("---")
 
         # Process items
@@ -167,6 +170,7 @@ if selected_order_id:
             line_id = item['id']
             item_status = status_map.get(line_id, "Unknown")
             sent_date, delivered_date = None, None
+            discount_ammount=(sum(float(i['amount_set']['presentment_money']['amount']) for i in item.get("discount_allocations", [])) if item.get("discount_allocations") else 0)
 
             properties = [i['value'] for i in item['properties']]
             is_final_sale = 'Final Sale' in properties
@@ -184,7 +188,8 @@ if selected_order_id:
                 "is_final_sale": is_final_sale,
                 "sent_date": sent_date,
                 "delivered_date": delivered_date,
-                "discount_codes": discount_codes
+                "discount_codes": discount_codes,
+                "discount_ammount": discount_ammount
             })
 
         # Display items in a more organized way
@@ -216,7 +221,8 @@ if selected_order_id:
                 with col1:
                     st.markdown("**📋 Item Details**")
                     st.write(f"**Quantity:** {row['item']['quantity']}")
-                    st.write(f"**Price:** ${row['item']['price']}")
+                    st.write(f"**Price:** {row['item']['price_set']['presentment_money']['amount']} - {row['discount_ammount']} {row['item']['price_set']['presentment_money']['currency_code']}")
+                    st.write(f"**Final Price:** {float(row['item']['price_set']['presentment_money']['amount'])-float(row['discount_ammount'])} {row['item']['price_set']['presentment_money']['currency_code']}")
                     st.write(f"**Status:** `{row['status']}`")
                     st.write(f"**Final Sale:** {'✅ Yes' if row['is_final_sale'] else '❌ No'}")
                     if row["discount_codes"] != "None":
