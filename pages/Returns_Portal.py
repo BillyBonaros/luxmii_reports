@@ -454,8 +454,8 @@ if selected_order_id:
                             st.markdown("**Available options:**")
                             for idx, option in enumerate(item['return_options'], start=1):
                                 st.write(f"{idx}. {option}")
-                        elif item['discount_percentage'] > 20:
-                            st.error(f"❌ High discount ({item['discount_percentage']}%) - Cannot be returned")
+                        # elif item['discount_percentage'] > 20:
+                        #     st.error(f"❌ High discount ({item['discount_percentage']}%) - Cannot be returned")
                         else:
                             st.success("✅ Eligible for return")
                             st.markdown("**Available options:**")
