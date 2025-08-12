@@ -426,7 +426,7 @@ if selected_order_id:
                             st.write(f"**Status:** `{item['status']}`")
                             st.write(f"**Was Returned:** {'✅ Yes' if item['was_returned'] else '❌ No'}")
                     with col3:
-                            st.markdown(f'<div class="discount-alert">🏷️ <strong>THIS ITEM HAS VARIANT DISCOUNT - {item['variant_discount']}%. PLEASE CHECK MANUALY</strong></div>', unsafe_allow_html=True)
+                            st.markdown(f'<div class="discount-alert">🏷️ <strong>THIS ITEM HAS VARIANT DISCOUNT - {item["variant_discount"]}%. PLEASE CHECK MANUALY</strong></div>', unsafe_allow_html=True)
 
                 else:
 
