@@ -213,7 +213,7 @@ def process_order_items(order, statuses, order_count):
         return_label = "RETURNED" if was_returned else eligibility_status
 
         if compare_at_price!=0:
-            variant_dic=float(variant_price)/float(compare_at_price)
+            variant_dic=(float(variant_price)/float(compare_at_price)) -1
         else:
             variant_dic=0
         results.append({
