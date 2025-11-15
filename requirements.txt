@@ -7,3 +7,6 @@ streamlit==1.35.0
 pypdf == 4.2.0
 bcrypt
 dotenv
+google-genai==1.50.1
+pillow==12.0.0
+python-dotenv==1.2.1
