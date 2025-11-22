@@ -217,7 +217,7 @@ def build_main_prompt(
 def generate_image_with_inputs(
     prompt: str,
     input_images: List,  # list of PIL Images or UploadedFiles
-    model_name: str = "gemini-2.5-flash-image",
+    model_name: str = "gemini-3-pro-image-preview",
 ) -> Optional[Image.Image]:
     """
     Generate an image using Nano Banana with text prompt + input images.
