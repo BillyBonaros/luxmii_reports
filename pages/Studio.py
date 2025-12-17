@@ -419,86 +419,7 @@ if generate_btn:
         st.error("Failed to generate main image.")
         st.stop()
 
-    # 4) Generate SECOND image (different pose)
-    pose_prompt = (
-        "Create a fashion photograph with a clearly different pose and camera angle. "
-        "FROM THE GENERATED IMAGE: Use the exact same background, environment, lighting style, and overall aesthetic. "
-        "FROM THE REFERENCE IMAGES: Maintain the model's appearance and outfit details. "
-        "Change only the pose (e.g., walking, turning 3/4, different arm position) and camera angle. "
-        "Everything else must remain identical."
-    )
 
-    with st.spinner("🎨 Generating different pose…"):
-        pose_image = generate_image_with_inputs(
-            pose_prompt,
-            [main_image] + all_reference_images
-        )
-
-    # 5) Generate THIRD image (close-up)
-    closeup_prompt = (
-        "Create a close-up or mid-shot focusing on upper body and face. "
-        "FROM THE GENERATED IMAGE: Match the background aesthetic, lighting quality, and color grading exactly. "
-        "FROM THE REFERENCE IMAGES: Maintain the model's appearance and outfit details. "
-        "Use shallow depth of field to softly blur the background. "
-        "Show garment textures and styling clearly."
-    )
-
-    with st.spinner("🎨 Generating close-up…"):
-        closeup_image = generate_image_with_inputs(
-            closeup_prompt,
-            [main_image] + all_reference_images
-        )
-
-    # 6) Generate backshot
-    backshot_prompt = (
-        "Create a fashion photograph showing the back view of the model. "
-        "FROM THE GENERATED IMAGE: Use the exact same background, environment, lighting style, and overall aesthetic. "
-        "FROM THE REFERENCE IMAGES: Maintain the model's appearance and outfit details. "
-        "Show the back of the outfit clearly - capture details like the back neckline, garment drape, "
-        "and how the clothing fits from behind. "
-        "The model can be looking over their shoulder slightly or facing completely away. "
-        "Vertical 3:4 aspect ratio, professional fashion editorial quality."
-    )
-
-    with st.spinner("🎨 Generating backshot…"):
-        backshot_image = generate_image_with_inputs(
-            backshot_prompt,
-            [main_image] + all_reference_images
-        )
-
-    # 7) Generate movement shot
-    movement_prompt = (
-        "Create a dynamic fashion photograph capturing the model in motion. "
-        "FROM THE GENERATED IMAGE: Match the background, environment, lighting style, and aesthetic exactly. "
-        "FROM THE REFERENCE IMAGES: Maintain the model's appearance and outfit details. "
-        "Show movement: walking stride, fabric flowing, hair in motion, spinning, or turning. "
-        "Capture the energy and fluidity of the outfit in action - show how the garments move and drape. "
-        "Slight motion blur acceptable for realism. "
-        "Vertical 3:4 aspect ratio, editorial fashion photography style."
-    )
-
-    with st.spinner("🎨 Generating movement shot…"):
-        movement_image = generate_image_with_inputs(
-            movement_prompt,
-            [main_image] + all_reference_images
-        )
-
-    # 8) Generate side profile
-    sideshot_prompt = (
-        "Create a fashion photograph showing the model's side profile at 90 degrees. "
-        "FROM THE GENERATED IMAGE: Use the exact same background, environment, lighting quality, and color palette. "
-        "FROM THE REFERENCE IMAGES: Maintain the model's appearance and outfit details. "
-        "Show the complete side silhouette of the outfit - emphasize the garment's shape, "
-        "layering, and how it fits the body from the side view. "
-        "Elegant pose, confident stance. "
-        "Vertical 3:4 aspect ratio, high-end fashion editorial lighting."
-    )
-
-    with st.spinner("🎨 Generating side profile…"):
-        sideshot_image = generate_image_with_inputs(
-            sideshot_prompt,
-            [main_image] + all_reference_images
-        )
 
     # 9) Display results
     st.subheader("✨ Results")
@@ -513,43 +434,6 @@ if generate_btn:
         else:
             st.error("No image returned.")
 
-    with col2:
-        st.markdown("**Different Pose**")
-        if pose_image:
-            st.image(pose_image, use_container_width=True)
-        else:
-            st.error("No image returned.")
-
-    with col3:
-        st.markdown("**Close-up Variant**")
-        if closeup_image:
-            st.image(closeup_image, use_container_width=True)
-        else:
-            st.error("No image returned.")
-
-    # Second row
-    col4, col5, col6 = st.columns(3)
-
-    with col4:
-        st.markdown("**Backshot**")
-        if backshot_image:
-            st.image(backshot_image, use_container_width=True)
-        else:
-            st.error("No image returned.")
-
-    with col5:
-        st.markdown("**Movement Shot**")
-        if movement_image:
-            st.image(movement_image, use_container_width=True)
-        else:
-            st.error("No image returned.")
-
-    with col6:
-        st.markdown("**Side Profile**")
-        if sideshot_image:
-            st.image(sideshot_image, use_container_width=True)
-        else:
-            st.error("No image returned.")
 
     # 10) Store all generated images in session state for re-use
     if 'generated_images' not in st.session_state:
@@ -560,12 +444,8 @@ if generate_btn:
 
     # Store current batch
     st.session_state.generated_images = [
-        {"name": "Main Image", "image": main_image},
-        {"name": "Different Pose", "image": pose_image},
-        {"name": "Close-up", "image": closeup_image},
-        {"name": "Backshot", "image": backshot_image},
-        {"name": "Movement", "image": movement_image},
-        {"name": "Side Profile", "image": sideshot_image},
+        {"name": "Main Image", "image": main_image}
+
     ]
     
     # Store all reference files for variations
@@ -575,30 +455,8 @@ if generate_btn:
     st.markdown("---")
     st.subheader("📦 Download Everything")
     
-    all_images = [img for img in [main_image, pose_image, closeup_image, backshot_image, movement_image, sideshot_image] if img is not None]
+    all_images = [img for img in [main_image] if img is not None]
     
-    with st.spinner("Creating ZIP bundle..."):
-        # Create animations
-
-        zip_data = create_zip_bundle(
-            main_image,
-            pose_image,
-            closeup_image,
-            backshot_image,
-            movement_image,
-            sideshot_image,
-
-        )
-    
-    if zip_data:
-        st.download_button(
-            label="📥 Download Complete Package (ZIP)",
-            data=zip_data,
-            file_name="fashion_photoshoot_complete.zip",
-            mime="application/zip",
-            type="primary",
-            use_container_width=True
-        )
 
 
 # 12) Interactive variation generator - OUTSIDE generate_btn block
