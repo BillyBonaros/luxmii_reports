@@ -134,6 +134,7 @@ def get_eligibility(is_final_sale, days_held, discount_pct, has_discount, order_
             "Alteration subsidy: 10% refund + $20 USD gift voucher"
         ]
 
+
 def process_order_items(order, statuses, order_count):
     results = []
     fulfillments = order.get("fulfillments", [])
@@ -163,33 +164,30 @@ def process_order_items(order, statuses, order_count):
             line_net= str(line_net)+' '+currency
 
 
+            lookup = {j['name']: j['value'] for j in item['properties']}
+
+            original_price = float(lookup.get('_Original_Price', None))
+            discount_amount = float(lookup.get('_Discount_Amount', None))
+            discount_percentage = lookup.get('_Discount_Percentage', None)
 
 
-            # Get discount allocations from the item (these are additional discounts like coupon codes)
-            discount_allocs = item.get("discount_allocations", [])
-            total_discount_amount = sum(float(d['amount']) for d in discount_allocs)
-            
-            # Calculate discount percentage ONLY from the discount allocations in the order data
-            discount_percentage = 0
-            if quantity > 0 and total_discount_amount > 0:
-                # Calculate percentage based on the discount amount vs original item price
-                original_item_price = price_per_item / quantity
-                discount_percentage = round((total_discount_amount / quantity / original_item_price) * 100, 2)
-            
-            # Get variant information ONLY for the indicator
-            variant_id = item.get("variant_id")
-            variant_price, compare_at_price = get_variant_prices(variant_id)
-            
-            # Check if there's a variant discount (compare_at_price exists and is higher than current variant price)
-            has_variant_discount = compare_at_price is not None and variant_price is not None and compare_at_price > variant_price
-            
+
+            if discount_amount:
+                total_discount_amount=float(discount_amount)
+                discount_percentage=int(discount_percentage[:-1])
+                has_discount = True
+
+            else:
+                total_discount_amount=0
+                discount_percentage=0
+                has_discount=False
+
             # Determine discount sources
             discount_sources = []
             has_order_discount = len(order.get("discount_codes", [])) > 0
             has_item_discount = total_discount_amount > 0
             
-            if has_variant_discount:
-                discount_sources.append("Variant Sale Price")
+
             if has_item_discount:
                 discount_sources.append("Item Discount Allocation")
             if has_order_discount:
@@ -207,7 +205,6 @@ def process_order_items(order, statuses, order_count):
 
             # Other checks
             is_final_sale = any(p['value'] == "Final Sale" for p in item.get("properties", []))
-            has_discount = bool(order.get("discount_codes"))
 
             # Was item returned
             was_returned = any(
@@ -231,10 +228,6 @@ def process_order_items(order, statuses, order_count):
 
             return_label = "RETURNED" if was_returned else eligibility_status
 
-            if compare_at_price!=0:
-                variant_dic=(float(variant_price)/float(compare_at_price)) -1
-            else:
-                variant_dic=0
             results.append({
                 "name": item["name"],
                 "sku": item["sku"],
@@ -244,7 +237,6 @@ def process_order_items(order, statuses, order_count):
                 "discount_amount": round(total_discount_amount / quantity, 2) if quantity > 0 else 0,
                 "discount_percentage": discount_percentage,
                 "discount_sources": discount_source_text,
-                "has_variant_discount": has_variant_discount,
                 "status": statuses.get(item_id, "Unknown"),
                 "was_returned": was_returned,
                 "return_label": return_label,
@@ -252,7 +244,6 @@ def process_order_items(order, statuses, order_count):
                 "eligibility_status": eligibility_status,
                 "return_options": return_options,
                 "days_held": days_held,
-                "variant_discount": round(variant_dic,2)*100,
                 "actual_paid":actual_paid,
                 "line_net":line_net
             })
@@ -437,57 +428,38 @@ if selected_order_id:
                         st.write("**💰 Discount:** None")
                     
                     # Show variant discount indicator (independent of order discounts)
-                    if item['has_variant_discount']:
-                                        # --- Column 2: Shipping info ---
-                        with col2:
-                            st.markdown("**📅 More Info**")
-                            # st.write("**Sent:** Not available")
-                            # st.write("**Delivered:** Not available")
-                            if item['days_held'] is not None:
-                                st.write(f"**Days Held:** {item['days_held']} day(s)")
-                                st.write(f"**Status:** `{item['status']}`")
-                                st.write(f"**Was Returned:** {'✅ Yes' if item['was_returned'] else '❌ No'}")
-
-                            else:
-                                st.write("**Days Held:** Not provided")
-                                st.write(f"**Status:** `{item['status']}`")
-                                st.write(f"**Was Returned:** {'✅ Yes' if item['was_returned'] else '❌ No'}")
-                        with col3:
-                                st.markdown(f'<div class="discount-alert">🏷️ <strong>THIS ITEM HAS VARIANT DISCOUNT - {item["variant_discount"]}%. PLEASE CHECK MANUALY</strong></div>', unsafe_allow_html=True)
-
-                    else:
 
                         # --- Column 2: Shipping info ---
-                        with col2:
-                            st.markdown("**📅 More Info**")
-                            # st.write("**Sent:** Not available")
-                            # st.write("**Delivered:** Not available")
-                            if item['days_held'] is not None:
-                                st.write(f"**Days Held:** {item['days_held']} day(s)")
-                                st.write(f"**Status:** `{item['status']}`")
-                                st.write(f"**Was Returned:** {'✅ Yes' if item['was_returned'] else '❌ No'}")
+                with col2:
+                    st.markdown("**📅 More Info**")
+                    # st.write("**Sent:** Not available")
+                    # st.write("**Delivered:** Not available")
+                    if item['days_held'] is not None:
+                        st.write(f"**Days Held:** {item['days_held']} day(s)")
+                        st.write(f"**Status:** `{item['status']}`")
+                        st.write(f"**Was Returned:** {'✅ Yes' if item['was_returned'] else '❌ No'}")
 
-                            else:
-                                st.write("**Days Held:** Not provided")
-                                st.write(f"**Status:** `{item['status']}`")
-                                st.write(f"**Was Returned:** {'✅ Yes' if item['was_returned'] else '❌ No'}")
-                        # --- Column 3: Return eligibility ---
-                        with col3:
-                            st.markdown("**🔄 Return Eligibility**")
-                            if item['eligibility_status'] == "FINAL SALE":
-                                st.error("❌ FINAL SALE — Cannot be returned")
-                            elif item['eligibility_status'] == "EXPIRED":
-                                st.error("⛔ Return period expired")
-                                st.markdown("**Available options:**")
-                                for idx, option in enumerate(item['return_options'], start=1):
-                                    st.write(f"{idx}. {option}")
-                            # elif item['discount_percentage'] > 20:
-                            #     st.error(f"❌ High discount ({item['discount_percentage']}%) - Cannot be returned")
-                            else:
-                                st.success("✅ Eligible for return")
-                                st.markdown("**Available options:**")
-                                for idx, option in enumerate(item['return_options'], start=1):
-                                    st.write(f"{idx}. {option}")
+                    else:
+                        st.write("**Days Held:** Not provided")
+                        st.write(f"**Status:** `{item['status']}`")
+                        st.write(f"**Was Returned:** {'✅ Yes' if item['was_returned'] else '❌ No'}")
+                # --- Column 3: Return eligibility ---
+                with col3:
+                    st.markdown("**🔄 Return Eligibility**")
+                    if item['eligibility_status'] == "FINAL SALE":
+                        st.error("❌ FINAL SALE — Cannot be returned")
+                    elif item['eligibility_status'] == "EXPIRED":
+                        st.error("⛔ Return period expired")
+                        st.markdown("**Available options:**")
+                        for idx, option in enumerate(item['return_options'], start=1):
+                            st.write(f"{idx}. {option}")
+                    # elif item['discount_percentage'] > 20:
+                    #     st.error(f"❌ High discount ({item['discount_percentage']}%) - Cannot be returned")
+                    else:
+                        st.success("✅ Eligible for return")
+                        st.markdown("**Available options:**")
+                        for idx, option in enumerate(item['return_options'], start=1):
+                            st.write(f"{idx}. {option}")
                 st.markdown("---")
 
     except Exception as e:
@@ -497,7 +469,7 @@ if selected_order_id:
 st.markdown("---")
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.markdown("*Returns Portal Pro v4.1*")
+    st.markdown("*Returns Portal Pro v5.1*")
 with col2:
     if st.session_state.current_order_data:
         st.markdown(f"*Order: {st.session_state.current_order_data['name']}*")
